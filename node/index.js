@@ -14,10 +14,10 @@ const wallet = new Wallet(process.env.MNEMONIC);
 
 const contract_wasm = fs.readFileSync("../contract.wasm.gz");
 
-let codeId = 1317;
+let codeId = 1319;
 let contractCodeHash =
-  "7ce84114e0d1401a8bdf37717a0d1389e348cf2ac26e2c79a1e4b301452c71e6";
-let contractAddress = "secret1k0s02fqqmlhq4g7qmlq9w76p4g9htwelszlk2y";
+  "e16a8979384b624ac98077a825f28151417ad2fbf39df597fb0b865a74285e6d";
+let contractAddress = "secret17quulca2rwr25epvzp9lm9s7m6r9w09e9633qf";
 
 const secretjs = new SecretNetworkClient({
   chainId: "secret-4",
@@ -125,9 +125,9 @@ let get_stored_message = async () => {
   console.log(query);
 };
 
-get_stored_message();
+// get_stored_message();
 
-// secretcli tx wasm execute "secret1k0s02fqqmlhq4g7qmlq9w76p4g9htwelszlk2y" '{"send_message_evm":{"destination_chain":"Polygon","destination_address":"0x13ACd5794A3136E7fAc8f9727259930fcab1290F","message":"seanrad"}}' --amount 150000ibc/A7CBAF118AC24A896DC46A098FE9FA2A588A36A2F0239913229D3A11D92E7B2E --from pulsar3-test
+// secretcli tx wasm execute "secret17quulca2rwr25epvzp9lm9s7m6r9w09e9633qf" '{"send_message_evm":{"destination_chain":"Polygon","destination_address":"0x13ACd5794A3136E7fAc8f9727259930fcab1290F"}}' --amount 150000ibc/A7CBAF118AC24A896DC46A098FE9FA2A588A36A2F0239913229D3A11D92E7B2E --from pulsar3-test
 
 // Polygon Mainnet contract:
 // 0x13ACd5794A3136E7fAc8f9727259930fcab1290F

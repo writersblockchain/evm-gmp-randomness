@@ -38,15 +38,7 @@ pub fn execute(
         ExecuteMsg::SendMessageEvm {
             destination_chain,
             destination_address,
-            message,
-        } => send_message_evm(
-            deps,
-            env,
-            info,
-            destination_chain,
-            destination_address,
-            message,
-        ),
+        } => send_message_evm(deps, env, info, destination_chain, destination_address),
         ExecuteMsg::ReceiveMessageEvm {
             source_chain,
             source_address,
@@ -61,12 +53,13 @@ pub fn send_message_evm(
     info: MessageInfo,
     destination_chain: String,
     destination_address: String,
-    message: String,
 ) -> Result<Response, CustomContractError> {
+    let random = env.block.random.unwrap().to_string();
+
     // Message payload to be received by the destination
     let message_payload = encode(&vec![
         Token::String(info.sender.to_string()),
-        Token::String(message),
+        Token::String(random),
     ]);
 
     let coin = &info.funds[0];

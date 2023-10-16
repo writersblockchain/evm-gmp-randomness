@@ -11,7 +11,6 @@ pub enum ExecuteMsg {
     SendMessageEvm {
         destination_chain: String,
         destination_address: String,
-        message: String,
     },
     ReceiveMessageEvm {
         source_chain: String,
