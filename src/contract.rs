@@ -4,14 +4,14 @@ use cosmwasm_std::{
 
 use crate::{
     errors::CustomContractError,
-    msg::{ExecuteMsg, Fee, GetStoredMessageResp, InstantiateMsg, QueryMsg},
+    msg::{ExecuteMsg, Fee, GetStoredRandomResp, InstantiateMsg, QueryMsg},
 };
 
-use crate::msg::QueryMsg::GetStoredMessage;
+use crate::msg::QueryMsg::GetStoredRandom;
 
 use crate::state::*;
 
-use ethabi::{decode, encode, ParamType, Token};
+use ethabi::{encode, Token};
 use prost::Message;
 use serde_json_wasm::to_string;
 
@@ -39,28 +39,20 @@ pub fn execute(
             destination_chain,
             destination_address,
         } => send_message_evm(deps, env, info, destination_chain, destination_address),
-        ExecuteMsg::ReceiveMessageEvm {
-            source_chain,
-            source_address,
-            payload,
-        } => receive_message_evm(deps, source_chain, source_address, payload),
     }
 }
 
 pub fn send_message_evm(
-    _deps: DepsMut,
+    deps: DepsMut,
     env: Env,
     info: MessageInfo,
     destination_chain: String,
     destination_address: String,
 ) -> Result<Response, CustomContractError> {
-    let random = env.block.random.unwrap().to_string();
+    let random = env.block.random.unwrap().0;
 
     // Message payload to be received by the destination
-    let message_payload = encode(&vec![
-        Token::String(info.sender.to_string()),
-        Token::String(random),
-    ]);
+    let message_payload = encode(&vec![Token::Bytes(random.clone())]);
 
     let coin = &info.funds[0];
 
@@ -98,47 +90,26 @@ pub fn send_message_evm(
         value: Binary(ibc_message.encode_to_vec()),
     };
 
-    Ok(Response::new().add_message(cosmos_msg))
-}
-
-pub fn receive_message_evm(
-    deps: DepsMut,
-    _source_chain: String,
-    _source_address: String,
-    payload: Binary,
-) -> Result<Response, CustomContractError> {
-    // decode the payload
-    // executeMsgPayload: [sender, message]
-    let decoded = decode(
-        &vec![ParamType::String, ParamType::String],
-        payload.as_slice(),
-    )
-    .unwrap();
-
-    // store message
-    STORED_MESSAGE.save(
+    STORED_RANDOM.save(
         deps.storage,
-        &MyMessage {
-            sender: decoded[0].to_string(),
-            message: decoded[1].to_string(),
+        &MyRandom {
+            random_bytes: random,
         },
     )?;
 
-    Ok(Response::new())
+    Ok(Response::new().add_message(cosmos_msg))
 }
 
 #[entry_point]
 pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
-        GetStoredMessage {} => to_binary(&get_stored_message(deps)?),
+        GetStoredRandom {} => to_binary(&get_stored_random(deps)?),
     }
 }
 
-pub fn get_stored_message(deps: Deps) -> StdResult<GetStoredMessageResp> {
-    let message = STORED_MESSAGE.may_load(deps.storage).unwrap().unwrap();
-    let resp = GetStoredMessageResp {
-        sender: message.sender,
-        message: message.message,
-    };
-    Ok(resp)
+pub fn get_stored_random(deps: Deps) -> StdResult<GetStoredRandomResp> {
+    let state = STORED_RANDOM.load(deps.storage)?;
+    Ok(GetStoredRandomResp {
+        random_bytes: state.random_bytes,
+    })
 }

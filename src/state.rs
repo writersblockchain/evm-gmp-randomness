@@ -2,9 +2,8 @@ use secret_toolkit::storage::Item;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
-pub struct MyMessage {
-    pub sender: String,
-    pub message: String,
+pub struct MyRandom {
+    pub random_bytes: Vec<u8>,
 }
 
-pub const STORED_MESSAGE: Item<MyMessage> = Item::new(b"stored_message");
+pub const STORED_RANDOM: Item<MyRandom> = Item::new(b"stored_random");

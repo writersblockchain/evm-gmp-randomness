@@ -1,4 +1,3 @@
-use cosmwasm_std::Binary;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -12,25 +11,21 @@ pub enum ExecuteMsg {
         destination_chain: String,
         destination_address: String,
     },
-    ReceiveMessageEvm {
-        source_chain: String,
-        source_address: String,
-        payload: Binary,
-    },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum QueryMsg {
-    GetStoredMessage {},
+    GetStoredRandom {},
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
-pub struct GetStoredMessageResp {
-    pub sender: String,
-    pub message: String,
+pub struct GetStoredRandomResp {
+    pub random_bytes: Vec<u8>,
 }
+
+// Axlear GMP structs
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub struct Fee {
