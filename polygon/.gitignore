@@ -1,5 +1,6 @@
 # Build results
 /target
+/target*
 Cargo.lock
 contract.wasm*
 contract.wasm.gz*
@@ -112,4 +113,3 @@ sw.*
 
 # Vim swap files
 *.swp
-
